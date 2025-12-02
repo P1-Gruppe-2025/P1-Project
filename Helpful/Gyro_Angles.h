@@ -56,7 +56,6 @@ void UpdateGyroscope(Zumo32U4IMU& IMU) {
   IMU.readGyro();
   TurnRate = IMU.g.z - CalibrationOffset;
   
-  Serial.println(IMU.g.z);
   uint16_t CurrentTime = micros();
   uint16_t DeltaTime = CurrentTime - LastUpdate;
   LastUpdate = CurrentTime;
