@@ -4,6 +4,29 @@
 
   This way, it introduces the functions and variables directly into your .ino file.
   You can make a new file by pressing the + new tab in the IDE editor, I am unaware of how it is in the earlier editors.
+
+  Example:
+  Zumo32U4IMU imu;
+
+void setup()
+{
+  Serial.begin(9600);
+  SetupGyroscope(imu);
+  ResetGyroscope();
+}
+
+void loop()
+{
+  UpdateGyroscope(imu);
+
+  int32_t Degrees = GetTurnAngleInDegrees();
+  //Serial.println(Degrees);
+  if (Degrees < 90) {
+    motors.setSpeeds(-400, 400);
+  } else {
+    motors.setSpeeds(0, 0);
+  }
+}
 */
 
 #pragma once
