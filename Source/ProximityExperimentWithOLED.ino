@@ -1,40 +1,39 @@
 #include <Zumo32U4.h>
 
-Zumo32U4OLED oled;
-Zumo32U4ProximitySensors prox;
-Zumo32U4Motors motors;
+Zumo32U4OLED OLED;
+Zumo32U4ProximitySensors ProximitySensors;
+Zumo32U4Motors Motors;
 
+const int MOVE_SPEED = 80;
+const int MINIMUM_DISTANCE_THRESHOLD_IN_CENTIMETERS = 5;
 
 void setup(){
-  prox.initThreeSensors();
-  oled.clear();
-  motors.setSpeeds(100,100);
+  ProximitySensors.initThreeSensors();
+  OLED.clear();
+  Motors.setSpeeds(MOVE_SPEED,MOVE_SPEED);
 }
 
-
 void loop(){
+  ProximitySensors.read();
+  int LeftCounts = ProximitySensors.countsLeftWithLeftLeds();
+  int CenterLeftCounts = ProximitySensors.countsFrontWithLeftLeds();
+  int CenterRightCounts = ProximitySensors.countsFrontWithRightLeds();
+  int RightCounts = ProximitySensors.countsRightWithRightLeds();
 
-  prox.read();
-  int left = prox.countsLeftWithLeftLeds();
-  int centerLeft = prox.countsFrontWithLeftLeds();
-  int centerRight = prox.countsFrontWithRightLeds();
-  int right = prox.countsRightWithRightLeds();
+  OLED.gotoXY(0,0);
 
-  oled.gotoXY(0,0);
+  OLED.print(LeftCounts); //venstre sensor
+  OLED.print(" ");
 
-  oled.print(left); //venstre sensor
-  oled.print(" ");
+  OLED.print(CenterLeftCounts); //venstre sensor i midten
+  OLED.print(" ");
 
-  oled.print(centerLeft); //venstre sensor i midten
-  oled.print(" ");
+  OLED.print(CenterRightCounts); //højre sensor i midten
+  OLED.print(" ");
 
-  oled.print(centerRight); //højre sensor i midten
-  oled.print(" ");
+  OLED.print(RightCounts); //højre sensor 
+  OLED.print(" ");
 
-  oled.print(right); //højre sensor 
-  oled.print(" ");
-
-  if (centerLeft>5 || centerRight>5){
-    motors.setSpeeds(0,0);
-  }
+  if (CenterLeftCounts < MINIMUM_DISTANCE_THRESHOLD_IN_CENTIMETERS && CenterRightCounts < MINIMUM_DISTANCE_THRESHOLD_IN_CENTIMETERS) continue; // Become a never nester, try not to indent, it ruins code flow.
+  Motors.setSpeeds(0,0);
 }
