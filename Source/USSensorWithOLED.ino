@@ -2,36 +2,36 @@
 
 Zumo32U4OLED oled;
 
-long duration;
-int distance;
+const int BAUD_RATE = 115200;
+const int TRIGONOMETRY_PIN = 9;
+const int ECHO_PIN = 13;
+const int INITIAL_SHOOTOUT_TIME_IN_MICROSECONDS = 2;
+const int TRIGONOMETRY_CAPTURE_TIME_IN_MICROSECONDS = 10;
+const float SPEED_OF_SOUND_IN_CENTIMETERS_PER_MICROSECONDS = 0.0343;
 
-const int trigPin = 9;
-const int echoPin = 13;
+long DurationInMicroseconds;
+int DistanceInCentimeters;
 
 void setup() {
- 
-pinMode(trigPin, OUTPUT);
-pinMode(echoPin, INPUT);
+  pinMode(TRIGONOMETRY_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
 
-Serial.begin(115200);
-oled.clear();
+  Serial.begin(BAUD_RATE);
+  oled.clear();
 }
 
-
 void loop() {
+  digitalWrite(TRIGONOMETRY_PIN, LOW);
+  delayMicroseconds(INITIAL_SHOOTOUT_TIME_IN_MICROSECONDS);
 
-digitalWrite(trigPin, LOW);
-delayMicroseconds(2);
+  digitalWrite(TRIGONOMETRY_PIN, HIGH);
+  delayMicroseconds(TRIGONOMETRY_CAPTURE_TIME_IN_MICROSECONDS);
+  digitalWrite(TRIGONOMETRY_PIN, LOW);
 
-digitalWrite(trigPin, HIGH);
-delayMicroseconds(10);
-digitalWrite(trigPin, LOW);
-duration = pulseIn(echoPin, HIGH);
-
-distance = duration * 0.034 / 2;
-Serial.print("Distance: ");
-Serial.println(distance);
-oled.gotoXY(0,0);
-oled.print(distance);
-
+  DurationInMicroseconds = pulseIn(ECHO_PIN, HIGH);
+  DistanceInCentimeters = DurationInMicroseconds * SPEED_OF_SOUND_IN_CENTIMETERS_PER_MICROSECONDS * 0.5;
+  Serial.print("Distance: ");
+  Serial.println(DistanceInCentimeters);
+  oled.gotoXY(0, 0);
+  oled.print(DistanceInCentimeters);
 }
